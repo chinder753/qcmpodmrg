@@ -1,15 +1,14 @@
-#!/usr/bin/python                                                                                                                                             \
+#!/usr/bin/python3                                                                                                                                            \
 #
 # Author: Enrico Ronca <enrico.r8729@gmail.com>
 #
 
 
-import os
 import numpy as np
-from scipy import fft, arange
+from scipy import fft
 
-def run(t,gfr,gfi,eta=0.3, rem_add='rem'):
 
+def run(t, gfr, gfi, eta=0.3, rem_add='rem'):
     time_array = t
     real_part = np.asarray(gfr)
     imag_part = np.asarray(gfi)
@@ -18,26 +17,26 @@ def run(t,gfr,gfi,eta=0.3, rem_add='rem'):
     delta_t = time_array[1]
 
     frq = np.fft.fftfreq(npoints, delta_t)
-    frq = np.fft.fftshift(frq)*2.0*np.pi
+    frq = np.fft.fftshift(frq) * 2.0 * np.pi
 
     if (rem_add == 'rem'):
-       fftinp = 1j*(real_part + 1j*imag_part)
+        fftinp = 1j * (real_part + 1j * imag_part)
     elif (rem_add == 'add'):
-       fftinp = 1j*(real_part - 1j*imag_part)
+        fftinp = 1j * (real_part - 1j * imag_part)
     else:
-       print 'Addition or Removal has not been specified!'
-       return
+        print('Addition or Removal has not been specified!')
+        return
 
     for i in range(npoints):
-        fftinp[i] = fftinp[i]*np.exp(-eta*time_array[i])
+        fftinp[i] = fftinp[i] * np.exp(-eta * time_array[i])
 
     Y = fft(fftinp)
     Y = np.fft.fftshift(Y)
 
     Y_real = Y.real
-    Y_real = (Y_real*time_array[-1]/npoints)
+    Y_real = (Y_real * time_array[-1] / npoints)
     Y_imag = Y.imag
-    Y_imag = (Y_imag*time_array[-1]/npoints)/np.pi
+    Y_imag = (Y_imag * time_array[-1] / npoints) / np.pi
 
     # Plot the results
     with open('ldos.out', 'w') as fout:
@@ -52,33 +51,34 @@ def run(t,gfr,gfi,eta=0.3, rem_add='rem'):
 
     import matplotlib.pyplot as plt
     fig = plt.figure()
-    plt.plot(frq,Y_real,'r-')
-    plt.plot(frq,Y_imag,'b-')
+    plt.plot(frq, Y_real, 'r-')
+    plt.plot(frq, Y_imag, 'b-')
     plt.show()
     plt.savefig("result.png")
 
-if __name__=="__main__":
-   
+
+if __name__ == "__main__":
+
     nsite = 8
     ttotal = 3.0
     nt = 30
-    tau = ttotal/nt
+    tau = ttotal / nt
 
-    tarray = np.arange(nt+1)*tau
-    gfdiag = np.zeros(nt+1,dtype=np.complex128)
-    gfsums = np.zeros(nt+1,dtype=np.complex128)
-    slst = [0] #range(nsite)
+    tarray = np.arange(nt + 1) * tau
+    gfdiag = np.zeros(nt + 1, dtype=np.complex128)
+    gfsums = np.zeros(nt + 1, dtype=np.complex128)
+    slst = [0]  # range(nsite)
     prefix = './dataOrder1/gf'
     for isite in slst:
+        gfdiag = np.load(prefix + str(isite) + '.npy')
+        gfsums += gfdiag
 
-       gfdiag = np.load(prefix+str(isite)+'.npy')
-       gfsums += gfdiag
+        gfr = [x.real for x in gfdiag]
+        gfi = [x.imag for x in gfdiag]
+        import matplotlib.pyplot as plt
 
-       gfr = map(lambda x:x.real,gfdiag)
-       gfi = map(lambda x:x.imag,gfdiag)
-       import matplotlib.pyplot as plt
-       plt.plot(tarray,gfr,'ro-')
-       plt.plot(tarray,gfi,'ro-')
+        plt.plot(tarray, gfr, 'ro-')
+        plt.plot(tarray, gfi, 'ro-')
 
     tarray4 = np.array(tarray)
     gfr4 = np.array(gfr)

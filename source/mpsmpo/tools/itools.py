@@ -1,5 +1,6 @@
-import random
 import operator
+import random
+
 
 def accumulate(iterable, func=operator.add):
     'Return running totals'
@@ -15,6 +16,7 @@ def accumulate(iterable, func=operator.add):
         total = func(total, element)
         yield total
 
+
 def permutations(iterable, r=None):
     # permutations('ABCD', 2) --> AB AC AD BA BC BD CA CB CD DA DB DC
     # permutations(range(3)) --> 012 021 102 120 201 210
@@ -23,14 +25,14 @@ def permutations(iterable, r=None):
     r = n if r is None else r
     if r > n:
         return
-    indices = range(n)
-    cycles = range(n, n-r, -1)
+    indices = list(range(n))
+    cycles = list(range(n, n - r, -1))
     yield tuple(pool[i] for i in indices[:r])
     while n:
-        for i in reversed(range(r)):
+        for i in reversed(list(range(r))):
             cycles[i] -= 1
             if cycles[i] == 0:
-                indices[i:] = indices[i+1:] + indices[i:i+1]
+                indices[i:] = indices[i + 1:] + indices[i:i + 1]
                 cycles[i] = n - i
             else:
                 j = cycles[i]
@@ -40,11 +42,13 @@ def permutations(iterable, r=None):
         else:
             return
 
+
 def random_permutation(iterable, r=None):
     "Random selection from itertools.permutations(iterable, r)"
     pool = tuple(iterable)
     r = len(pool) if r is None else r
     return tuple(random.sample(pool, r))
+
 
 def combinations(iterable, r):
     # combinations('ABCD', 2) --> AB AC AD BC BD CD
@@ -53,48 +57,50 @@ def combinations(iterable, r):
     n = len(pool)
     if r > n:
         return
-    indices = range(r)
+    indices = list(range(r))
     yield tuple(pool[i] for i in indices)
     while True:
-        for i in reversed(range(r)):
+        for i in reversed(list(range(r))):
             if indices[i] != i + n - r:
                 break
         else:
             return
         indices[i] += 1
-        for j in range(i+1, r):
-            indices[j] = indices[j-1] + 1
+        for j in range(i + 1, r):
+            indices[j] = indices[j - 1] + 1
         yield tuple(pool[i] for i in indices)
+
 
 def random_combination(iterable, r):
     "Random selection from itertools.combinations(iterable, r)"
     pool = tuple(iterable)
     n = len(pool)
-    indices = sorted(random.sample(xrange(n), r))
+    indices = sorted(random.sample(list(range(n)), r))
     return tuple(pool[i] for i in indices)
 
+
 if __name__ == '__main__':
-   # # TEST
-   # print list(permutations('ABCD', 2))
-   # print list(permutations(range(5), 2))
-   # print random_permutation(range(5))
-   # 
-   # print list(combinations('ABCD', 2))
-   # print list(combinations(range(5), 2))
-   # print random_combination(range(5), 2)
-   # 
-   # print "ALL COMBINATIONS:"
-   # for i in combinations(range(4),3):
-   #    print i
-   p1=1
-   p2=2
-   p3=3
-   p4=4
-   print list(permutations([p1,p2,p3,p4],4))
+    # # TEST
+    # print list(permutations('ABCD', 2))
+    # print list(permutations(range(5), 2))
+    # print random_permutation(range(5))
+    #
+    # print list(combinations('ABCD', 2))
+    # print list(combinations(range(5), 2))
+    # print random_combination(range(5), 2)
+    #
+    # print "ALL COMBINATIONS:"
+    # for i in combinations(range(4),3):
+    #    print i
+    p1 = 1
+    p2 = 2
+    p3 = 3
+    p4 = 4
+    print((list(permutations([p1, p2, p3, p4], 4))))
 
-   for i in combinations([1],1):
-      print i	  
+    for i in combinations([1], 1):
+        print(i)
 
-   print len(list(combinations(range(6),4)))
-   for i in combinations(range(6),4):
-      print i	   
+    print((len(list(combinations(list(range(6)), 4)))))
+    for i in combinations(list(range(6)), 4):
+        print(i)

@@ -18,5 +18,5 @@ export SCRATCH="/scratch/global/zhendong/hubbard2D/"
 mkdir -p $SCRATCH
 rm -r $SCRATCH
 mkdir -p $SCRATCH
-srun python -u main.py > main.out
+srun python3-u main.py > main.out
 rm -r $SCRATCH

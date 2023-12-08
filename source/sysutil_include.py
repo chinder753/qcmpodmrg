@@ -6,14 +6,15 @@
 #
 # Subroutines:
 #
-import os
 import ctypes
+import os
+
 import numpy
 from mpi4py import MPI
 
 pth = os.path.dirname(os.path.abspath(__file__))
-pth = os.path.split(pth)[0] 
-pth = os.path.join(pth,'libs/libqsym.so')
+pth = os.path.split(pth)[0]
+pth = os.path.join(pth, 'libs/libqsym.so')
 libqsym = ctypes.CDLL(pth)
 
 dmrg_type = 'real'
